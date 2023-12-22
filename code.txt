@@ -1,0 +1,1874 @@
+adHocAppoint  
+------------ 
+<?php
+session_start();
+$conn=mysqli_connect("localhost","root","","entry");
+
+$visid="V".rand(0,10000);
+$name=$_POST["vname"];
+$password="password";
+
+$ticid = "T".rand(0,10000);
+
+$purpose = $_POST["purpose"];
+$empid=explode(" ",$_POST["enames"],2)[0];
+$date = $_POST["date"];
+
+$aptTime = $_POST["time"].":00";
+require_once("uploadPhoto.php");
+
+$sqlr = "insert into register values('$visid','$name','$fileTmpName','$password')";
+$sql = "insert into appointment values('$ticid','$visid','$purpose','$empid','$date','$aptTime','inTime','outTime','Pending')";
+$msg = "";
+if(mysqli_query($conn,$sqlr))
+{
+	$msg .= "Added to register<br>";
+}
+else
+{
+	$msg .= "Can't add to register".mysqli_error($conn)."<br>";
+}
+if(mysqli_query($conn,$sql))
+	{
+		$result = mysqli_query($conn,"select * from appointment where ticId='$ticid'");
+	
+		$thead="<table id='reg'><tr><th>Tic ID</th><th>Visitor Id</th><th>Purpose</th><th>Emp Id</th><th>date</th>";
+		$thead.="<th>appTime</th><th>Status</th></tr>";
+		$table="";
+		while($row = mysqli_fetch_array($result))
+		{
+		$table.="<tr id='t$row[0]'>";
+		for($i=0;$i<9;$i++){
+			if($i==7 | $i==6) continue;
+			$table.="<td>".$row[$i];
+			$table.="</td>";
+		}
+		$table.="</tr>";
+		}
+		$table.="</table>";
+		$msg.= "Your Appointment has been made (Ticket id:<b>'$ticid'</b>). Check the review portal to verify approval<br>";
+		$msg.= "<a href='AppointmentVerifier.php'>Review Appointment Status</a><br>";
+		$msg.= "<a href='portal.php'>Go back</a><br>";
+		
+	}
+	
+	else
+	{
+		$msg.="Appointment could not be made".mysqli_error($conn);
+	}
+?>
+<head>
+<link rel="stylesheet" href="css/style.css" />
+<style>
+<?php include "css/reg.css" ?>
+</style>
+</head>
+<body>
+    <header class="header">
+
+        <!-- left box for logo in navbar -->
+        <div class="left">
+            <img src="img/logo.png">
+            <div> AAC Consultant </div>
+        </div>
+
+        <!-- mid box for buttons navbar -->
+        <nav class="mid">
+            <ul class="navbar">
+                <li><a href="index.html" class="active">home</a></li>
+                <li><a href="aboutus.html">about us</a></li>
+                <li><a href="contactus.html">contact us</a></li>
+                <li><a href="facilities.html">facilities</a></li>
+				<li><a href="#">portal</a>
+					<ul>
+						<li><a href="PortalVisitor.php">for Vistors</a></li>
+						<li><a href="PortalEmployee.php">for Employees</a></li>
+						<li><a href="PortalGuard.php">for Guards</a></li>
+					</ul>
+				</li>
+            </ul>
+        </nav>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button>
+			<br>
+            <a href="portal.php"><?php echo "Greetings, ".$_SESSION['name'] ?></a>
+        </div>
+
+    </header>
+	
+	<div class="content">
+	<?php echo $thead.$table ?>
+	<br>
+	<div class="msg">
+	<?php echo $msg?>
+	</div>
+	</div>
+</body>
+</html>
+AppointmentStatusChecker  
+------------ 
+<?php
+session_start();
+require_once("auth.php");
+authVisit("Visitor");
+require_once("search2.php");
+if(isset($_POST["sub"]))
+{
+	$_POST["append"] = "<br><input type='button' name='ccl' value='Cancel'/>";
+	$_POST["len"] = 10;
+	$_POST["cstat"] = "Pending";
+	$_POST["thead"] =	"<th>Ticket ID</th>".
+						"<th>Visitor Id</th>".
+						"<th>Name</th>".
+						"<th>Photo</th>".
+						"<th>Purpose</th>".
+						"<th>Employee Name</th>".
+						"<th>Employee Dept</th>".
+						"<th>Date</th>".
+						"<th>Appoint. Time</th>".
+						"<th>Status</th>";
+	$_POST["view"]="vwapt";
+	
+	$_POST["cond"] = "ticId";
+	
+	searchV();
+}
+
+?>
+<script>
+window.onload = function(){
+	buttons = document.querySelectorAll("#reg input");
+	for(i=0;i<buttons.length;i++)
+	{
+		ticid = buttons[i].parentNode.parentNode.id;
+		buttons[i].addEventListener("click",function(){action(ticid);});
+		//buttons[i].style.backgroundColor = 'red';
+	}
+    console.log('The page has fully loaded');
+};
+
+action = function(id){
+	rem = document.getElementById("rem");
+	document.getElementsByName("tid")[0].value = id;
+	//alert(rem.innerHTML);
+	msg = "Are you sure you wish to cancel Appoitment (Ticket Id:"+id+")?";
+	if(confirm(msg))
+		rem.submit();
+}
+</script>
+<link rel="stylesheet" href="css/style.css" />
+<style>
+<?php include "css/reg.css" ?>
+</style>
+</head>
+<body>
+    <header class="header">
+
+        <!-- left box for logo in navbar -->
+        <div class="left">
+            <img src="img/logo.png">
+            <div> AAC Consultant </div>
+        </div>
+
+        <!-- mid box for buttons navbar -->
+        <nav class="mid">
+            <ul class="navbar">
+                <li><a href="index.html" class="active">home</a></li>
+                <li><a href="aboutus.html">about us</a></li>
+                <li><a href="contactus.html">contact us</a></li>
+                <li><a href="facilities.html">facilities</a></li>
+				<li><a href="#">portal</a>
+					<ul>
+						<li><a href="PortalVisitor.php">for Vistors</a></li>
+						<li><a href="PortalEmployee.php">for Employees</a></li>
+						<li><a href="PortalGuard.php">for Guards</a></li>
+					</ul>
+				</li>
+            </ul>
+        </nav>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button>
+			<br>
+            <a href="portal.php"><?php echo "Greetings, ".$_SESSION['name'] ?></a>
+        </div>
+
+    </header>
+	
+<div class="content">
+<h1>Appointment Status Checker</h1>
+
+<form method="post">
+<input name="key" type="text" placeholder="Search by Ticket Id"/>
+<input name="sub" type="submit" value="search"/>
+</form>
+<div id="pres"><?php echo $table?></div>
+<form id="rem" method="post" action="cancelAppoint.php">
+<input name="tid" type="hidden" value=""/>
+</form>
+</div>
+</body>AppointmentUpdate  
+------------ 
+<?php
+session_start();
+require_once("auth.php");
+authVisit("Guard");
+require_once("search2.php");
+if(isset($_POST["sub"]))
+{
+	$_POST["append"] = "<br><input type='button' name='upd' value='Update'/>";
+	$_POST["len"] = 11;
+	$_POST["cstat"] = "Ongoing";
+	$_POST["thead"] =	"<th>Ticket ID</th>".
+						"<th>Visitor Id</th>".
+						"<th>Name</th>".
+						"<th>Photo</th>".
+						"<th>Purpose</th>".
+						"<th>Employee Name</th>".
+						"<th>Employee Dept</th>".
+						"<th>Date</th>".
+						"<th>Appoint. Time</th>".
+						"<th>In Time</th>".
+						"<th>Status</th>";
+	$_POST["view"]="vwaptin";
+	
+	$_POST["cond"] = "ticId";
+	
+	searchV();
+}
+
+?>
+<script>
+window.onload = function(){
+	buttons = document.querySelectorAll("#reg input");
+	for(i=0;i<buttons.length;i++)
+	{
+		ticid = buttons[i].parentNode.parentNode.id;
+		buttons[i].addEventListener("click",function(){change(ticid);});
+		//buttons[i].style.backgroundColor = 'red';
+	}
+    console.log('The page has fully loaded');
+};
+
+var change = function(id){
+	nlist = document.getElementById(id).innerHTML;
+	document.getElementById("reg").innerHTML = "<?php echo $_POST['thead']?>" + "<tr>"+nlist+"</tr>";
+	document.getElementById("update").style.display = "block";
+	document.getElementsByName("tid")[0].value = id;
+}
+</script>
+<link rel="stylesheet" href="css/style.css" />
+<style>
+<?php include "css/reg.css" ?>
+</style>
+</head>
+<body>
+    <header class="header">
+
+        <!-- left box for logo in navbar -->
+        <div class="left">
+            <img src="img/logo.png">
+            <div> AAC Consultant </div>
+        </div>
+
+        <!-- mid box for buttons navbar -->
+        <nav class="mid">
+            <ul class="navbar">
+                <li><a href="index.html" class="active">home</a></li>
+                <li><a href="aboutus.html">about us</a></li>
+                <li><a href="contactus.html">contact us</a></li>
+                <li><a href="facilities.html">facilities</a></li>
+				<li><a href="#">portal</a>
+					<ul>
+						<li><a href="PortalVisitor.php">for Vistors</a></li>
+						<li><a href="PortalEmployee.php">for Employees</a></li>
+						<li><a href="PortalGuard.php">for Guards</a></li>
+					</ul>
+				</li>
+            </ul>
+        </nav>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button>
+			<br>
+            <a href="portal.php"><?php echo "Greetings, ".$_SESSION['name'] ?></a>
+        </div>
+
+    </header>
+	
+<div class="content">	
+<h1>Appointment Update</h1>
+<form method="post">
+<input name="key" type="text" placeholder="Search by Ticket Id"/>
+<input name="sub" type="submit" value="search"/>
+</form>
+<div id="pres"><?php echo $table?></div>
+
+
+<form id="update" style="text-align:center;display:none;margin:1em;" method="post" action="outUpdate.php">
+<table style="margin:auto">
+<input type="hidden" name="tid" />
+<tr>
+	<td>Exit time</td>
+	<td><input type="time" name="exit"></td>
+</tr>
+<tr>
+	<td>Purpose Fulfilled</td>
+	<td>
+		<input type="radio" value="Complete" name="done">Yes<br>
+		<input type="radio" value="Ineffective" name="done">No
+	</td>
+</tr>
+<tr>
+	<td colspan="2" style="text-align:center"><input type="submit" value="Submit"></td>
+</tr>
+</table>
+
+</form>
+</div>
+</body>AppointmentVerifier  
+------------ 
+<?php
+session_start();
+require_once("auth.php");
+authVisit("Guard");
+require_once("search2.php");
+if(isset($_POST["sub"]))
+{
+	$_POST["append"] = "<br><input type='button' name='ccl' value='Register'/>";
+	$_POST["len"] = 10;
+	$_POST["cstat"] = "Approved";
+	$_POST["thead"] =	"<th>Ticket ID</th>".
+						"<th>Visitor Id</th>".
+						"<th>Name</th>".
+						"<th>Photo</th>".
+						"<th>Purpose</th>".
+						"<th>Employee Name</th>".
+						"<th>Employee Dept</th>".
+						"<th>Date</th>".
+						"<th>Appoint. Time</th>".
+						"<th>Status</th>";
+	$_POST["view"]="vwapt";
+	
+	switch($_POST["keytype"])
+	{	
+		case "Ticket Id":
+		$_POST["cond"] = "ticId";
+		break;
+		case "Visitor Id":
+		$_POST["cond"] = "visId";
+		break;
+	}
+	
+	searchV();
+}
+
+
+?>
+<script>
+window.onload = function(){
+	buttons = document.querySelectorAll("#reg input");
+	for(i=0;i<buttons.length;i++)
+	{
+		ticid = buttons[i].parentNode.parentNode.id;
+		buttons[i].addEventListener("click",function(){action(ticid);});
+		//buttons[i].style.backgroundColor = 'red';
+	}
+    console.log('The page has fully loaded');
+};
+
+setCDateTime = function(){
+
+var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
+	d = localISOTime.split(/[T\.]/);
+	//document.getElementsByName("date")[0].value=d[0];
+	document.getElementsByName("time")[0].value=d[1];
+}
+
+var action = function(id){
+	document.getElementsByName("tid")[0].value = id;
+	setCDateTime();
+	document.getElementById("rem").submit();
+}
+</script>
+<link rel="stylesheet" href="css/style.css" />
+<style>
+<?php include "css/reg.css" ?>
+</style>
+</head>
+<body>
+    <header class="header">
+
+        <!-- left box for logo in navbar -->
+        <div class="left">
+            <img src="img/logo.png">
+            <div> AAC Consultant </div>
+        </div>
+
+        <!-- mid box for buttons navbar -->
+        <nav class="mid">
+            <ul class="navbar">
+                <li><a href="index.html" class="active">home</a></li>
+                <li><a href="aboutus.html">about us</a></li>
+                <li><a href="contactus.html">contact us</a></li>
+                <li><a href="facilities.html">facilities</a></li>
+				<li><a href="#">portal</a>
+					<ul>
+						<li><a href="PortalVisitor.php">for Vistors</a></li>
+						<li><a href="PortalEmployee.php">for Employees</a></li>
+						<li><a href="PortalGuard.php">for Guards</a></li>
+					</ul>
+				</li>
+            </ul>
+        </nav>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button>
+			<br>
+            <a href="portal.php"><?php echo "Greetings, ".$_SESSION['name'] ?></a>
+        </div>
+
+    </header>
+
+<div class="content">
+<h1>Appointment Verifier</h1>
+<form method="post">
+<label>Search By:</label>
+<select name="keytype">
+<option>Ticket Id</option>
+<option>Visitor Id</option>
+</select>
+<br><br>
+<input name="key" type="text"/>
+<input name="sub" type="submit" value="search"/>
+</form>
+<div id="pres"><?php echo $table?></div>
+<form id="rem" method="post" action="toReg.php">
+<input name="tid" type="hidden" value=""/>
+<input name="time" type="hidden" value=""/>
+</form>
+</div>
+</body>auth  
+------------ 
+<?php
+function authVisit($authidtype){
+	if($_SESSION["idtype"]!=$authidtype)
+	{
+		header("Location:portal.php");
+	}
+}
+?>
+cancelAppoint  
+------------ 
+<?php
+$conn=mysqli_connect("localhost","root","","entry");
+
+$ticid = $_POST["tid"];
+//echo $ticid;
+
+$sql = "delete from appointment where ticId='$ticid'";
+if(mysqli_query($conn,$sql))
+	{
+
+		$msg = "Your Appointment (Ticket id:'$ticid') has been cancelled<br>";
+		$msg.= "<a href=#>Review Appointment Status</a><br>";
+		$msg.= "<a href=#>Go back</a><br>";
+		
+		echo $msg;
+	}
+	
+	else
+	{
+		echo "Not Ok";
+		echo "<div class='div1'>".mysqli_error($conn)."</div>";
+	}
+?>
+echoes  
+------------ 
+<?php
+
+echo "wololololololololololololololol";
+echo $_POST["rid"];
+?>EmployeeApproval  
+------------ 
+<?php
+session_start();
+require_once("auth.php");
+authVisit("Employee");
+$table="";
+
+if(isset($_SESSION['id']))
+{
+	$data = $_SESSION['id'];
+	$conn = mysqli_connect("localhost","root","","entry");
+
+	$sql="select * from appointment a inner join register r on r.id=a.visId where empId='$data' and status='Pending'";
+
+	$result=mysqli_query($conn,$sql);
+	$table = "<table id='reg'>
+	<tr>
+	<th>empId</th>
+	<th>ticId</th>
+	<th>visId</th>
+	<th>name</th>
+	<th>photo</th>
+	<th>purpose</th>
+	<th>date</th>
+	<th>aptTime</th>
+	<th>status</th>
+	</tr>";
+while($row=mysqli_fetch_array($result))
+{
+	$table.= "<tr>
+	<td>".$row[3]."</td>
+	<td>".$row['ticId']."</td>
+	<td>".$row['visId']."</td>
+	<td>".$row['name']."</td>
+	<td><img src='uploads/".$row['photo']."'/></td>
+	<td>".$row['purpose']."</td>
+	<td>".$row['date']."</td>
+	<td>".$row['aptTime']."</td>
+			<td>".$row['status']."<br>
+			<input type='button' value='Accept' onclick=\"response('".$row['ticId']."','Approved')\" /><br>
+			<input type='button' value='Reject' onclick=\"response('".$row['ticId']."','Rejected')\" /></td>
+			
+	</tr>";
+}
+$table .= "</table>"; 
+}
+else
+{
+	header("Location:portal.php");
+}
+
+?>
+<head>
+<link rel="stylesheet" href="css/style.css" />
+<style>
+<?php include "css/reg.css" ?>
+</style>
+<script>
+response = function(id,stat){
+	document.getElementsByName("rid")[0].value = id;
+	document.getElementsByName("stat")[0].value = stat;
+	//alert(document.getElementsByName("stat")[0].value);
+	document.getElementById('response').submit();
+}
+</script>
+</head>
+<body>
+    <header class="header">
+
+        <!-- left box for logo in navbar -->
+        <div class="left">
+            <img src="img/logo.png">
+            <div> AAC Consultant </div>
+        </div>
+
+        <!-- mid box for buttons navbar -->
+        <nav class="mid">
+            <ul class="navbar">
+                <li><a href="index.html" class="active">home</a></li>
+                <li><a href="aboutus.html">about us</a></li>
+                <li><a href="contactus.html">contact us</a></li>
+                <li><a href="facilities.html">facilities</a></li>
+				<li><a href="#">portal</a>
+					<ul>
+						<li><a href="PortalVisitor.php">for Vistors</a></li>
+						<li><a href="PortalEmployee.php">for Employees</a></li>
+						<li><a href="PortalGuard.php">for Guards</a></li>
+					</ul>
+				</li>
+            </ul>
+        </nav>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button>
+			<br>
+            <a href="portal.php"><?php echo "Greetings, ".$_SESSION['name'] ?></a>
+        </div>
+
+    </header>
+
+<div class="content">
+<h1>Pending Appointments</h1>
+<?php echo $table ?>
+<form id="response" action="responseEmp.php" method="post">
+<input name="rid" type="hidden" value=""/>
+<input name="stat" type="hidden" value=""/>
+</form>
+</div>
+</body>EmployeeMasterViewer  
+------------ 
+<?php
+session_start();
+require_once("auth.php");
+authVisit("Employee");
+$table="";
+
+if(isset($_SESSION['id']))
+{
+	$data = $_SESSION['id'];
+	$conn = mysqli_connect("localhost","root","","entry");
+
+	$sql="select * from appointment a inner join register r on r.id=a.visId where empId='$data'";
+
+	$result=mysqli_query($conn,$sql);
+	$table = "<table id='reg'>
+	<tr>
+	<th>empId</th>
+	<th>ticId</th>
+	<th>visId</th>
+	<th>name</th>
+	<th>photo</th>
+	<th>purpose</th>
+	<th>date</th>
+	<th>aptTime</th>
+	<th>inTime</th>
+	<th>outTime</th>
+	<th>status</th>
+	</tr>";
+while($row=mysqli_fetch_array($result))
+{
+	$table.= "<tr>
+	<td>".$row[3]."</td>
+	<td>".$row['ticId']."</td>
+	<td>".$row['visId']."</td>
+	<td>".$row['name']."</td>
+	<td><img src='uploads/".$row['photo']."'/></td>
+	<td>".$row['purpose']."</td>
+	<td>".$row['date']."</td>
+	<td>".$row['aptTime']."</td>
+	<td>".$row['inTime']."</td>
+	<td>".$row['outTime']."</td>
+	<td>".$row['status']."</td>
+			
+	</tr>";
+}
+$table .= "</table>"; 
+}
+else
+{
+	header("Location:portal.php");
+}
+
+?>
+<head>
+<link rel="stylesheet" href="css/style.css" />
+<style>
+<?php include "css/reg.css" ?>
+</style>
+</head>
+<body>
+    <header class="header">
+
+        <!-- left box for logo in navbar -->
+        <div class="left">
+            <img src="img/logo.png">
+            <div> AAC Consultant </div>
+        </div>
+
+        <!-- mid box for buttons navbar -->
+        <nav class="mid">
+            <ul class="navbar">
+                <li><a href="index.html" class="active">home</a></li>
+                <li><a href="aboutus.html">about us</a></li>
+                <li><a href="contactus.html">contact us</a></li>
+                <li><a href="facilities.html">facilities</a></li>
+				<li><a href="#">portal</a>
+					<ul>
+						<li><a href="PortalVisitor.php">for Vistors</a></li>
+						<li><a href="PortalEmployee.php">for Employees</a></li>
+						<li><a href="PortalGuard.php">for Guards</a></li>
+					</ul>
+				</li>
+            </ul>
+        </nav>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button>
+			<br>
+            <a href="portal.php"><?php echo "Greetings, ".$_SESSION['name'] ?></a>
+        </div>
+
+    </header>
+	
+<div class="content">
+<h1>All Appointments</h1>
+<?php echo $table ?>
+</div>
+</body>login  
+------------ 
+<?php
+session_start();
+if(isset($_POST["sub"]))
+{
+	$conn = mysqli_connect("localhost","root","","entry");
+	
+	echo $_POST["idtype"];
+	switch($_POST["idtype"]){
+		case "Visitor":
+			$sql = "select * from register where id='".$_POST["id"]."'and password='".$_POST["pass"]."'";
+			break;
+		case "Employee":
+			$sql = "select * from emp where id='".$_POST["id"]."'and password='".$_POST["pass"]."'";
+			break;
+		case "Guard":
+			$sql = "select * from emp where id='".$_POST["id"]."'and password='".$_POST["pass"]."'and deptId='000'";
+			break;
+	}
+	
+	$result = mysqli_query($conn,$sql);
+	$row = mysqli_fetch_array($result);
+	
+	if($row>0)
+	{
+		$_SESSION["id"]=$_POST["id"];
+		$_SESSION["idtype"] = $_POST["idtype"];
+		$_SESSION["name"] = $row["name"];
+		header("Location:portal.php");
+	}
+	else
+	{
+		header("Location:login.php");
+	}
+}
+
+
+?>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> AAC Consultant </title>
+
+</head>
+
+<link rel="stylesheet" href="css/style.css">
+
+
+<body ontouchstart>
+    <header class="header">
+
+        <!-- left box for logo in navbar -->
+        <div class="left">
+            <img src="img/logo.png">
+            <div> AAC Consultant </div>
+        </div>
+
+        <!-- mid box for buttons navbar -->
+        <nav class="mid">
+            <ul class="navbar">
+                <li><a href="index.html" class="active">home</a></li>
+                <li><a href="aboutus.html">about us</a></li>
+                <li><a href="contactus.html">contact us</a></li>
+                <li><a href="facilities.html">facilities</a></li>
+				<li><a href="#">portal</a>
+					<ul>
+						<li><a href="PortalVisitor.php">for Vistors</a></li>
+						<li><a href="PortalEmployee.php">for Employees</a></li>
+						<li><a href="PortalGuard.php">for Guards</a></li>
+					</ul>
+				</li>
+            </ul>
+        </nav>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button>
+			<br>
+            <a href="login.php">Login/Signup</a>
+        </div>
+
+    </header>
+
+    <!--  Welcome to AAC - content  -->
+	<div class="content">
+		<h1>Login Page</h1>
+		<br>
+		<form method="post">
+		<table>
+		<tr>
+		<td>Login as</td>
+		<td>
+			<select name="idtype">
+				<option>Visitor</option>
+				<option>Employee</option>
+				<option>Guard</option>
+			</select>
+		</td>
+		</tr>
+		<tr>
+		<td>Login Id</td>
+		<td><input name="id" type="text"></td>
+		</tr>
+		<tr>
+		<td>Password</td>
+		<td><input name="pass" type="password"></td>
+		</tr>
+		<tr>
+		<td colspan=2><input type="submit" name="sub" value="Login"></td>
+		</tr>
+		</table>
+		
+		</form>
+		<a href="signup.php">Sign up as Visitor</a>
+	</div>
+</body>
+
+</html>logout  
+------------ 
+<?php
+session_start();
+session_destroy();
+header("Location:login.php");
+?>makeAppoint  
+------------ 
+<?php
+session_start();
+$conn=mysqli_connect("localhost","root","","entry");
+
+$ticid = "T".rand(0,10000);
+$visid=$_SESSION["id"];
+$purpose = $_POST["purpose"];
+$empid=explode(" ",$_POST["enames"],2)[0];
+$date = $_POST["date"];
+
+$aptTime = $_POST["time"].":00";
+
+$sql = "insert into appointment values('$ticid','$visid','$purpose','$empid','$date','$aptTime','inTime','outTime','Pending')";
+if(mysqli_query($conn,$sql))
+	{
+		$result = mysqli_query($conn,"select * from appointment where ticId='$ticid'");
+	
+		$thead="<table id='reg'><tr><th>Tic ID</th><th>Visitor Id</th><th>Purpose</th><th>Emp Id</th><th>date</th>";
+		$thead.="<th>appTime</th><th>Status</th></tr>";
+		$table="";
+		while($row = mysqli_fetch_array($result))
+		{
+		$table.="<tr id='t$row[0]'>";
+		for($i=0;$i<9;$i++){
+			if($i==7 | $i==6) continue;
+			$table.="<td>".$row[$i];
+			$table.="</td>";
+		}
+		$table.="</tr>";
+		}
+		$table.="</table>";
+		$msg = "Your Appointment has been made (Ticket id:<b>'$ticid'</b>). Check the review portal to verify approval<br>";
+		$msg.= "<a href='AppointmentStatusChecker.php'>Review Appointment Status</a><br>";
+		$msg.= "<a href='portal.php'>Go back</a><br>";
+		
+	}
+	
+	else
+	{
+		$msg = "Your Appointment could not be made.<br>".mysqli_error($conn);
+	}
+?>
+
+<link rel="stylesheet" href="css/style.css" />
+<style>
+<?php include "css/reg.css" ?>
+</style>
+</head>
+<body>
+    <header class="header">
+
+        <!-- left box for logo in navbar -->
+        <div class="left">
+            <img src="img/logo.png">
+            <div> AAC Consultant </div>
+        </div>
+
+        <!-- mid box for buttons navbar -->
+        <nav class="mid">
+            <ul class="navbar">
+                <li><a href="index.html" class="active">home</a></li>
+                <li><a href="aboutus.html">about us</a></li>
+                <li><a href="contactus.html">contact us</a></li>
+                <li><a href="facilities.html">facilities</a></li>
+				<li><a href="#">portal</a>
+					<ul>
+						<li><a href="PortalVisitor.php">for Vistors</a></li>
+						<li><a href="PortalEmployee.php">for Employees</a></li>
+						<li><a href="PortalGuard.php">for Guards</a></li>
+					</ul>
+				</li>
+            </ul>
+        </nav>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button>
+			<br>
+            <a href="portal.php"><?php echo "Greetings, ".$_SESSION['name'] ?></a>
+        </div>
+
+    </header>
+	
+	<div class="content">
+	<?php echo $thead.$table ?>
+	<br>
+	<div class="msg">
+	<?php echo $msg?>
+	</div>
+	</div>
+</body>
+</html>
+OnlineAppointment  
+------------ 
+<?php
+session_start();
+require_once("auth.php");
+authVisit("Visitor");
+
+$conn=mysqli_connect("localhost","root","","entry");
+$dname="select * from dept";
+$sql="select id,name,deptId from emp";
+
+$result = mysqli_query($conn,$sql);
+$dres = mysqli_query($conn,$dname);
+
+$option = "";$doption = "";
+while($row = mysqli_fetch_array($dres))
+{
+	$doption .= "<option>".$row['name']."</option>";
+	$arr[$row['id']]=$row['name'];
+}
+
+while($row = mysqli_fetch_array($result))
+{
+	$option .= "<option class='".$arr[$row['deptId']]."'>".$row['id']." - ".$row['name']."</option>";
+}
+?>
+
+<html>
+<head>
+<script>
+var nodes;
+load = function(){
+	nodes = document.getElementById('enames').childNodes;
+}
+
+dchange = function(){
+	var cdept = document.getElementById('dnames').value;
+	for(i=0;i<nodes.length;i++)
+	{
+		nodes[i].style.display = (cdept === nodes[i].getAttribute("class"))?'block':'none';
+	}
+}
+</script>
+<link rel="stylesheet" href="css/style.css" />
+<style>
+<?php include "css/reg.css" ?>
+</style>
+</head>
+<body onload="load()">
+    <header class="header">
+
+        <!-- left box for logo in navbar -->
+        <div class="left">
+            <img src="img/logo.png">
+            <div> AAC Consultant </div>
+        </div>
+
+        <!-- mid box for buttons navbar -->
+        <nav class="mid">
+            <ul class="navbar">
+                <li><a href="index.html" class="active">home</a></li>
+                <li><a href="aboutus.html">about us</a></li>
+                <li><a href="contactus.html">contact us</a></li>
+                <li><a href="facilities.html">facilities</a></li>
+				<li><a href="#">portal</a>
+					<ul>
+						<li><a href="PortalVisitor.php">for Vistors</a></li>
+						<li><a href="PortalEmployee.php">for Employees</a></li>
+						<li><a href="PortalGuard.php">for Guards</a></li>
+					</ul>
+				</li>
+            </ul>
+        </nav>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button>
+			<br>
+            <a href="portal.php"><?php echo "Greetings, ".$_SESSION['name'] ?></a>
+        </div>
+
+    </header>
+	
+<div class="content">	
+<h1>Visitor's Appointment Form</h1>
+<br>
+<form style="text-align:center" action="makeAppoint.php" method="post">
+<table style="margin:auto">
+<tr>
+	<td>Purpose</td>
+	<td><input type="name" name="purpose"></td>
+</tr>
+<tr>
+	<td>Employee Department</td>
+	<td>
+	<select id="dnames" onchange="dchange()" name="dnames">
+	<?php echo @$doption?>
+	</select>
+	</td>
+</tr>
+<tr>
+	<td>Employee Name</td>
+	<td><select id="enames" name="enames"><?php echo @$option?></select></td>
+</tr>
+<tr>
+	<td>Date</td>
+	<td><input type="date" name="date"></td>
+</tr>
+<tr>
+	<td>Time</td>
+	<td><input type="time" name="time"></td>
+</tr>
+<tr>
+	<td colspan="2" style="text-align:center"><input type="submit" value="Submit" name="sub"></td>
+</tr>
+</table>
+
+</form>
+</div>
+
+</body>
+</html>OnsiteAppointment  
+------------ 
+<?php
+session_start();
+require_once("auth.php");
+authVisit("Guard");
+
+$conn=mysqli_connect("localhost","root","","entry");
+$dname="select * from dept";
+$sql="select id,name,deptid from emp";
+
+$result = mysqli_query($conn,$sql);
+$dres = mysqli_query($conn,$dname);
+
+$option = "";$doption = "";
+while($row = mysqli_fetch_array($dres))
+{
+	$doption .= "<option>".$row['name']."</option>";
+	$arr[$row['id']]=$row['name'];
+}
+while($row = mysqli_fetch_array($result))
+{
+	$option .= "<option class='".$arr[$row['deptid']]."'>".$row['id']." - ".$row['name']."</option>";
+}
+?>
+
+<html>
+<head>
+<script>
+var nodes;
+setCDateTime = function(){
+
+var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
+	d = localISOTime.split(/[T\.]/);
+	document.getElementsByName("date")[0].value=d[0];
+	document.getElementsByName("time")[0].value=d[1];
+}
+
+load = function(){
+	nodes = document.getElementById('enames').childNodes;
+	setCDateTime();
+}
+
+dchange = function(){
+	var cdept = document.getElementById('dnames').value;
+	for(i=0;i<nodes.length;i++)
+	{
+		nodes[i].style.display = (cdept === nodes[i].getAttribute("class"))?'block':'none';
+	}
+}
+
+
+</script>
+<link rel="stylesheet" href="css/style.css" />
+<style>
+<?php include "css/reg.css" ?>
+</style>
+</head>
+<body onload="load()">
+    <header class="header">
+
+        <!-- left box for logo in navbar -->
+        <div class="left">
+            <img src="img/logo.png">
+            <div> AAC Consultant </div>
+        </div>
+
+        <!-- mid box for buttons navbar -->
+        <nav class="mid">
+            <ul class="navbar">
+                <li><a href="index.html" class="active">home</a></li>
+                <li><a href="aboutus.html">about us</a></li>
+                <li><a href="contactus.html">contact us</a></li>
+                <li><a href="facilities.html">facilities</a></li>
+				<li><a href="#">portal</a>
+					<ul>
+						<li><a href="PortalVisitor.php">for Vistors</a></li>
+						<li><a href="PortalEmployee.php">for Employees</a></li>
+						<li><a href="PortalGuard.php">for Guards</a></li>
+					</ul>
+				</li>
+            </ul>
+        </nav>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button>
+			<br>
+            <a href="portal.php"><?php echo "Greetings, ".$_SESSION['name'] ?></a>
+        </div>
+
+    </header>
+
+<div class="content">	
+<h1>Onsite Appointment</h1>
+<br>
+<form style="text-align:center" action="adHocAppoint.php" method="post" enctype="multipart/form-data">
+<table style="margin:auto">
+<tr>
+	<td>Name</td>
+	<td><input type="name" name="vname"></td>
+</tr>
+<tr>
+	<td>Purpose</td>
+	<td><input type="name" name="purpose"></td>
+</tr>
+<tr>
+	<td>Employee Department</td>
+	<td>
+	<select id="dnames" onchange="dchange()" name="dnames">
+	<?php echo @$doption?>
+	</select>
+	</td>
+</tr>
+<tr>
+	<td>Employee Name</td>
+	<td><select id="enames" name="enames"><?php echo @$option?></select></td>
+</tr>
+<tr>
+	<td>Photo</td>
+	<td><input type="file" name="photo"></td>
+</tr>
+<tr>
+	<td colspan="2" style="text-align:center"><input type="submit" value="Submit" name="sub" onmousedown="setCDateTime()"></td>
+</tr>
+</table>
+<input type="hidden" name="date" value="1980-01-01">
+<input type="hidden" name="time" value="">
+
+</form>
+</div>
+</body>
+</html>outUpdate  
+------------ 
+<?php
+session_start();
+$conn=mysqli_connect("localhost","root","","entry");
+
+$ticid=$_POST["tid"];
+$outTime=$_POST["exit"].":00";
+$status = $_POST["done"];
+
+$sql = "update appointment set outTime='$outTime',status='$status' where ticId='$ticid'";
+if(mysqli_query($conn,$sql))
+	{
+		$result = mysqli_query($conn,"select * from appointment where ticId='$ticid'");
+	
+		$thead="<table id='reg'><tr><th>Tic ID</th><th>Vis Id</th><th>Purpose</th><th>Emp Id</th><th>date</th>";
+		$thead.="<th>appTime</th><th>inTime</th><th>outTime</th><th>Status</th></tr>";
+		$table="";
+		while($row = mysqli_fetch_array($result))
+		{
+		$table.="<tr id='$row[0]'>";
+		for($i=0;$i<9;$i++){
+			$table.="<td>".$row[$i];
+			$table.="</td>";
+		}
+		$table.="</tr>";
+		}
+		$table.="</table>";
+		$msg = "Appointment Id '$ticid' has updated";
+	}
+	
+	else
+	{
+		$msg = "An error has occurred.<br>";
+		$msg.=mysqli_error($conn);
+	}
+?>
+<html>
+<head>
+<link rel="stylesheet" href="css/style.css" />
+<style>
+<?php include "css/reg.css" ?>
+</style>
+</head>
+<body>
+    <header class="header">
+
+        <!-- left box for logo in navbar -->
+        <div class="left">
+            <img src="img/logo.png">
+            <div> AAC Consultant </div>
+        </div>
+
+        <!-- mid box for buttons navbar -->
+        <nav class="mid">
+            <ul class="navbar">
+                <li><a href="index.html" class="active">home</a></li>
+                <li><a href="aboutus.html">about us</a></li>
+                <li><a href="contactus.html">contact us</a></li>
+                <li><a href="facilities.html">facilities</a></li>
+				<li><a href="#">portal</a>
+					<ul>
+						<li><a href="PortalVisitor.php">for Vistors</a></li>
+						<li><a href="PortalEmployee.php">for Employees</a></li>
+						<li><a href="PortalGuard.php">for Guards</a></li>
+					</ul>
+				</li>
+            </ul>
+        </nav>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button>
+			<br>
+            <a href="portal.php"><?php echo "Greetings, ".$_SESSION['name'] ?></a>
+        </div>
+
+    </header>
+	
+	<div class="content">
+	<?php echo $thead.$table ?>
+	<br>
+	<div class="msg">
+	<?php echo $msg?>
+	</div>
+	</div>
+</body>
+</html>
+
+portal  
+------------ 
+<?php
+session_start();
+if(isset($_SESSION["id"]))
+{
+	switch($_SESSION["idtype"]){
+	case "Visitor":
+		header("Location:PortalVisitor.php");
+		break;
+	case "Employee":
+		header("Location:PortalEmployee.php");
+		break;
+	case "Guard":
+		header("Location:PortalGuard.php");
+		break;
+	}
+}
+else
+{
+	header("Location:login.php");
+}
+?>PortalEmployee  
+------------ 
+<?php
+session_start();
+require_once("auth.php");
+authVisit("Employee");
+?>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> AAC Consultant </title>
+
+</head>
+
+<link rel="stylesheet" href="css/style.css">
+
+
+<body ontouchstart>
+    <header class="header">
+
+        <!-- left box for logo in navbar -->
+        <div class="left">
+            <img src="img/logo.png">
+            <div> AAC Consultant </div>
+        </div>
+
+        <!-- mid box for buttons navbar -->
+        <nav class="mid">
+            <ul class="navbar">
+                <li><a href="index.html" class="active">home</a></li>
+                <li><a href="aboutus.html">about us</a></li>
+                <li><a href="contactus.html">contact us</a></li>
+                <li><a href="facilities.html">facilities</a></li>
+				<li><a href="#">portal</a>
+					<ul>
+						<li><a href="PortalVisitor.php">for Vistors</a></li>
+						<li><a href="PortalEmployee.php">for Employees</a></li>
+						<li><a href="PortalGuard.php">for Guards</a></li>
+					</ul>
+				</li>
+            </ul>
+        </nav>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button>
+			<br>
+            <a href="portal.php"><?php echo "Greetings, ".$_SESSION['name'] ?></a>
+        </div>
+
+    </header>
+
+	<div class="content">
+    <h1>Welcome to Employee Portal</h1>
+	<div class="options">
+	<a href="EmployeeApproval.php">Check Pending Appointments</a><br>
+	<a href="EmployeeMasterViewer.php">Check All Appointments</a>
+	</div>
+	<br>
+	<a href="logout.php">Log out</a>
+	
+	</div>
+</body>
+
+</html>PortalGuard  
+------------ 
+<?php
+session_start();
+require_once("auth.php");
+authVisit("Guard");
+?>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> AAC Consultant </title>
+
+</head>
+
+<link rel="stylesheet" href="css/style.css">
+
+
+<body ontouchstart>
+    <header class="header">
+
+        <!-- left box for logo in navbar -->
+        <div class="left">
+            <img src="img/logo.png">
+            <div> AAC Consultant </div>
+        </div>
+
+        <!-- mid box for buttons navbar -->
+        <nav class="mid">
+            <ul class="navbar">
+                <li><a href="index.html" class="active">home</a></li>
+                <li><a href="aboutus.html">about us</a></li>
+                <li><a href="contactus.html">contact us</a></li>
+                <li><a href="facilities.html">facilities</a></li>
+				<li><a href="#">portal</a>
+					<ul>
+						<li><a href="PortalVisitor.php">for Vistors</a></li>
+						<li><a href="PortalEmployee.php">for Employees</a></li>
+						<li><a href="PortalGuard.php">for Guards</a></li>
+					</ul>
+				</li>
+            </ul>
+        </nav>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button>
+			<br>
+            <a href="portal.php"><?php echo "Greetings, ".$_SESSION['name'] ?></a>
+        </div>
+
+    </header>
+
+	<div class="content">
+    <h1>Welcome to Guard Portal</h1>
+	<div class="options">
+	<a href="AppointmentVerifier.php">Verify Appointment</a><br>
+	<a href="OnsiteAppointment.php">Onsite Appointment</a><br>
+	<a href="AppointmentUpdate.php">Visitor Exit Update</a>
+	</div>
+	<br>
+	<a href="logout.php">Log out</a>
+	</div>
+</body>
+
+</html>PortalVisitor  
+------------ 
+<?php
+session_start();
+require_once("auth.php");
+authVisit("Visitor");
+?>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> AAC Consultant </title>
+
+</head>
+
+<link rel="stylesheet" href="css/style.css">
+
+
+<body ontouchstart>
+    <header class="header">
+
+        <!-- left box for logo in navbar -->
+        <div class="left">
+            <img src="img/logo.png">
+            <div> AAC Consultant </div>
+        </div>
+
+        <!-- mid box for buttons navbar -->
+        <nav class="mid">
+            <ul class="navbar">
+                <li><a href="index.html" class="active">home</a></li>
+                <li><a href="aboutus.html">about us</a></li>
+                <li><a href="contactus.html">contact us</a></li>
+                <li><a href="facilities.html">facilities</a></li>
+				<li><a href="#">portal</a>
+					<ul>
+						<li><a href="PortalVisitor.php">for Vistors</a></li>
+						<li><a href="PortalEmployee.php">for Employees</a></li>
+						<li><a href="PortalGuard.php">for Guards</a></li>
+					</ul>
+				</li>
+            </ul>
+        </nav>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button>
+			<br>
+            <a href="portal.php"><?php echo "Greetings, ".$_SESSION['name'] ?></a>
+        </div>
+
+    </header>
+
+	<div class="content">
+    <h1>Welcome to Visitor Portal</h1>
+	<div class="options">
+	<a href="OnlineAppointment.php">Create Appointment</a><br>
+	<a href="AppointmentStatusChecker.php">Check Appointment Status/Cancel Appointment</a>
+	</div>
+	<br>
+	<a href="logout.php">Log out</a>
+	</div>
+</body>
+
+</html>responseEmp  
+------------ 
+<?php
+session_start();
+$conn=mysqli_connect("localhost","root","","entry");
+
+$ticid = $_POST["rid"];
+$stat = $_POST["stat"];
+//echo $ticid;
+
+$sql = "update appointment set status = '$stat' where ticId='$ticid'";
+if(mysqli_query($conn,$sql))
+	{
+		$msg = "The appointment (Ticket Id:<b>'$ticid'</b>) has been '$stat'. You can go back and decide on other appointments.<br>";
+		$msg .= "<a href='EmployeeApproval.php'>Pending Appointments</a><br>";
+		$msg .= "<a href='portal.php'>Go Back</a>";
+		
+	}
+	
+	else
+	{
+		$msg = "An error has occured<br>";
+		$msg.=mysqli_error($conn);
+	}
+?>
+<html>
+<head>
+<link rel="stylesheet" href="css/style.css" />
+<style>
+<?php include "css/reg.css" ?>
+</style>
+</head>
+<body>
+    <header class="header">
+
+        <!-- left box for logo in navbar -->
+        <div class="left">
+            <img src="img/logo.png">
+            <div> AAC Consultant </div>
+        </div>
+
+        <!-- mid box for buttons navbar -->
+        <nav class="mid">
+            <ul class="navbar">
+                <li><a href="index.html" class="active">home</a></li>
+                <li><a href="aboutus.html">about us</a></li>
+                <li><a href="contactus.html">contact us</a></li>
+                <li><a href="facilities.html">facilities</a></li>
+				<li><a href="#">portal</a>
+					<ul>
+						<li><a href="PortalVisitor.php">for Vistors</a></li>
+						<li><a href="PortalEmployee.php">for Employees</a></li>
+						<li><a href="PortalGuard.php">for Guards</a></li>
+					</ul>
+				</li>
+            </ul>
+        </nav>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button>
+			<br>
+            <a href="portal.php"><?php echo "Greetings, ".$_SESSION['name'] ?></a>
+        </div>
+
+    </header>
+	
+	<div class="content">
+	<div class="msg">
+	<?php echo $msg?>
+	</div>
+	</div>
+</body>
+</html>
+
+search2  
+------------ 
+<?php 
+$table="";
+function searchV()
+{
+	GLOBAL $table;
+	
+	$append = $_POST["append"];
+	$len = $_POST["len"];
+	$cstat = $_POST["cstat"];
+	$thead = $_POST["thead"];
+	$view = $_POST["view"];
+	$cond = $_POST["cond"];
+	$key = $_POST["key"];
+	
+	$table .= "<table id='reg'><tr>".$thead."</tr>";
+	
+	$conn = mysqli_connect("localhost","root","","entry");
+	$sql = "select * from ".$view." where ".$cond." = '".$key."'";
+	$result = mysqli_query($conn,$sql);
+	
+	
+	
+	while($row = mysqli_fetch_array($result))
+	{
+		$table.="<tr id='$row[0]'>";
+		for($i=0;$i<$len;$i++){
+			
+			if($i == 3)
+			{
+				$table.="<td><img src='uploads//".$row[$i]."' /></td>";
+				continue;
+			}
+			$table.="<td>".$row[$i];
+			if($row[$i] == $cstat){
+				$table.=$append;
+			}
+			$table.="</td>";
+		}
+		$table.="</tr>";
+	}
+	$table.="</table>";
+}
+
+
+?>signup  
+------------ 
+<?php
+session_start();
+$msg = "";
+if(isset($_POST["sub"]))
+{
+	$uid = $_POST["uid"];
+	$name = $_POST["name"];
+	$pass = $_POST["pass"];
+	
+	$conn = mysqli_connect("localhost","root","","entry");
+	$sql = "select * from register where id='$uid'";
+	$result = mysqli_query($conn,$sql);
+	$row = mysqli_fetch_array($result);
+	if($row >0)
+	{
+		$msg = "Sorry, this user id is taken";
+	}
+	else
+	{
+		//$files = $_FILES["photo"];
+		require("uploadPhoto.php");
+		if($fileUpload)
+		{
+			$sql = "insert into register (id,name,photo,password) values ('$uid','$name','$fileTmpName','$pass')";
+			
+			if(mysqli_query($conn,$sql))
+			{
+				header("Location:login.php");
+			}
+			else{
+				$msg = "Sorry, something went wrong";
+			}
+		}
+		else{
+			$msg = "Sorry, photo couldn't be uploaded";
+		}
+	}
+
+}
+
+
+?>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> AAC Consultant </title>
+
+</head>
+
+<link rel="stylesheet" href="css/style.css">
+
+
+<body ontouchstart>
+    <header class="header">
+
+        <!-- left box for logo in navbar -->
+        <div class="left">
+            <img src="img/logo.png">
+            <div> AAC Consultant </div>
+        </div>
+
+        <!-- mid box for buttons navbar -->
+        <nav class="mid">
+            <ul class="navbar">
+                <li><a href="index.html">home</a></li>
+                <li><a href="aboutus.html">about us</a></li>
+                <li><a href="contactus.html">contact us</a></li>
+                <li><a href="facilities.html">facilities</a></li>
+				<li><a href="#">portal</a>
+					<ul>
+						<li><a href="PortalVisitors.html">for Vistors</a></li>
+						<li><a href="PortalEmployee.html">for Employees</a></li>
+						<li><a href="PortalGuard.html">for Guards</a></li>
+					</ul>
+				</li>
+            </ul>
+        </nav>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button>
+			<br>
+            <a href="login.php">Login/Signup</a>
+        </div>
+
+    </header>
+
+    <!--  Welcome to AAC - content  -->
+	<div class="content">
+		<h1>Sign-up Page</h1>
+		<br>
+		<form method="post" enctype="multipart/form-data">
+		<table>
+		<tr>
+		<td>User ID</td>
+		<td>
+			<input type="text" name="uid" />
+		</td>
+		</tr>
+		<tr>
+		<td>Name</td>
+		<td><input name="name" type="text"></td>
+		</tr>
+		<tr>
+		<td>Photo</td>
+		<td><input name="photo" type="file"></td>
+		</tr>
+		<tr>
+		<td>Password</td>
+		<td><input name="pass" type="password"></td>
+		</tr>
+		<td>Retype Password</td>
+		<td><input name="repass" type="password"></td>
+		</tr>
+		<tr>
+		<td colspan=2><input type="submit" name="sub" value="Sign Up"></td>
+		</tr>
+		</table>
+		
+		</form>
+		<a href="login.php">Have an account? Login</a>
+		<div><?php echo $msg?></div>
+	</div>
+</body>
+
+</html>
+toReg  
+------------ 
+<?php
+session_start();
+$conn=mysqli_connect("localhost","root","","entry");
+
+$ticid = $_POST["tid"];
+$intime = $_POST["time"];
+//echo $ticid;
+
+$sql = "update appointment set inTime='$intime',status='Ongoing' where ticId='$ticid'";
+if(mysqli_query($conn,$sql))
+	{
+
+		$msg = "Your Visit (Ticket id:<b>'$ticid'</b>) has been recorded<br>";
+		$msg.= "<a href='portal.php'>Go back</a><br>";
+	}
+	
+	else
+	{
+		$msg = "An error has occured.<br>";
+		$msg.=mysqli_error($conn);
+	}
+?>
+<html>
+<head>
+<link rel="stylesheet" href="css/style.css" />
+<style>
+<?php include "css/reg.css" ?>
+</style>
+</head>
+<body>
+    <header class="header">
+
+        <!-- left box for logo in navbar -->
+        <div class="left">
+            <img src="img/logo.png">
+            <div> AAC Consultant </div>
+        </div>
+
+        <!-- mid box for buttons navbar -->
+        <nav class="mid">
+            <ul class="navbar">
+                <li><a href="index.html" class="active">home</a></li>
+                <li><a href="aboutus.html">about us</a></li>
+                <li><a href="contactus.html">contact us</a></li>
+                <li><a href="facilities.html">facilities</a></li>
+				<li><a href="#">portal</a>
+					<ul>
+						<li><a href="PortalVisitor.php">for Vistors</a></li>
+						<li><a href="PortalEmployee.php">for Employees</a></li>
+						<li><a href="PortalGuard.php">for Guards</a></li>
+					</ul>
+				</li>
+            </ul>
+        </nav>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button>
+			<br>
+            <a href="portal.php"><?php echo "Greetings, ".$_SESSION['name'] ?></a>
+        </div>
+
+    </header>
+	
+	<div class="content">
+	<div class="msg">
+	<?php echo $msg?>
+	</div>
+	</div>
+</body>
+</html>
+uploadPhoto  
+------------ 
+<?php
+
+// Config
+$currentDirectory = getcwd();
+$uploadDirectory = "\\uploads\\";
+$fileExtensionsAllowed = ['jpeg','jpg','png']; // These will be the only file extensions allowed 
+$fileLimitMb = 5; // File limit in MB
+$uploadOk = true;
+
+$fileName = $_FILES['photo']['name'];
+$fileSize = $_FILES['photo']['size'];
+$fileTmpFullPath  = $_FILES['photo']['tmp_name'];
+$fileType = $_FILES['photo']['type'];
+$fileExtension = explode('.',$fileName);
+$fileExtension = strtolower(end($fileExtension));
+//$fileType = strtolower(pathinfo($fileName,PATHINFO_EXTENSION));
+$fileTmp = explode("\\",$fileTmpFullPath);
+$fileTmp = end($fileTmp);
+$fileTmp = explode('.',$fileTmp)[0];
+
+$fileTmpName = $fileTmp.".".$fileExtension;
+$uploadPath = $currentDirectory . $uploadDirectory .$fileTmpName; 
+
+if ($fileSize > ($fileLimitMb * 100000)) {
+	echo "File must be less than" . $fileLimitMb . "MB.";
+	$uploadOk = false;
+}
+
+if ($uploadOk == false) {
+	$msg = "Photo couldn't be uploaded. Please check file size";
+
+} else {
+	$fileUpload = move_uploaded_file($fileTmpFullPath, $uploadPath);
+	}
+
+
+?>

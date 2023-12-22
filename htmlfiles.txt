@@ -1,0 +1,272 @@
+aboutus  
+---------- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> about us </title>
+</head>
+<link rel="stylesheet" href="css/style.css">
+<body>
+    <header class="header">
+
+        <!-- left box for logo in navbar -->
+        <div class="left">
+            <img src="img/logo.png">
+            <div> AAC Consultant </div>
+        </div>
+
+        <!-- mid box for buttons navbar -->
+        <nav class="mid">
+            <ul class="navbar">
+                <li><a href="index.html" class="active">home</a></li>
+                <li><a href="aboutus.html">about us</a></li>
+                <li><a href="contactus.html">contact us</a></li>
+                <li><a href="facilities.html">facilities</a></li>
+				<li><a href="#">portal</a>
+					<ul>
+						<li><a href="PortalVisitor.php">for Vistors</a></li>
+						<li><a href="PortalEmployee.php">for Employees</a></li>
+						<li><a href="PortalGuard.php">for Guards</a></li>
+					</ul>
+				</li>
+            </ul>
+        </nav>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button>
+			<br>
+            <a href="login.php">Login/Signup</a>
+        </div>
+
+    </header>
+ 
+    <!-- About us content -->
+    <div class="content">
+        <h1>History</h1>
+        This is demo page in the Appoinntments and Visitor's Entry System, only meant for demonstration purposes.
+    
+        <h2>1986–1992</h2>
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+    
+        <h2>1994–2000</h2>
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+		"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+		"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+    
+        <h2>2001–2011</h2>
+        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
+    
+        <h2>2012-2018</h2>
+        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
+    
+        <h2>2019-2020</h2>
+        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
+            <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit</li>
+            <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit</li>
+            <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit</li>
+            <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit</li>
+            <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit</li>
+            <li>ILorem ipsum dolor sit amet, consectetur adipiscing elit</li>
+            <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit</li>
+        </ul>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+contactus  
+---------- 
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> contact us </title>
+
+</head>
+
+<link rel="stylesheet" href="css/style.css">
+
+
+<body>
+        <header class="header">
+
+        <!-- left box for logo in navbar -->
+        <div class="left">
+            <img src="img/logo.png">
+            <div> AAC Consultant </div>
+        </div>
+
+        <!-- mid box for buttons navbar -->
+        <nav class="mid">
+            <ul class="navbar">
+                <li><a href="index.html" class="active">home</a></li>
+                <li><a href="aboutus.html">about us</a></li>
+                <li><a href="contactus.html">contact us</a></li>
+                <li><a href="facilities.html">facilities</a></li>
+				<li><a href="#">portal</a>
+					<ul>
+						<li><a href="PortalVisitor.php">for Vistors</a></li>
+						<li><a href="PortalEmployee.php">for Employees</a></li>
+						<li><a href="PortalGuard.php">for Guards</a></li>
+					</ul>
+				</li>
+            </ul>
+        </nav>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button>
+			<br>
+            <a href="login.php">Login/Signup</a>
+        </div>
+
+    </header>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button><br>
+            <a href="login.php">Login/Signup</a>
+        </div>facilities  
+---------- 
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> fAcilities </title>
+
+</head>
+
+<link rel="stylesheet" href="css/style.css">
+
+
+<body>
+        <header class="header">
+
+        <!-- left box for logo in navbar -->
+        <div class="left">
+            <img src="img/logo.png">
+            <div> AAC Consultant </div>
+        </div>
+
+        <!-- mid box for buttons navbar -->
+        <nav class="mid">
+            <ul class="navbar">
+                <li><a href="index.html" class="active">home</a></li>
+                <li><a href="aboutus.html">about us</a></li>
+                <li><a href="contactus.html">contact us</a></li>
+                <li><a href="facilities.html">facilities</a></li>
+				<li><a href="#">portal</a>
+					<ul>
+						<li><a href="PortalVisitor.php">for Vistors</a></li>
+						<li><a href="PortalEmployee.php">for Employees</a></li>
+						<li><a href="PortalGuard.php">for Guards</a></li>
+					</ul>
+				</li>
+            </ul>
+        </nav>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button>
+			<br>
+            <a href="login.php">Login/Signup</a>
+        </div>
+
+    </header>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button><br>
+                <a href="login.php">Login/Signup</a>
+        </div>index  
+---------- 
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> AAC Consultant </title>
+
+</head>
+
+<link rel="stylesheet" href="css/style.css">
+
+
+<body ontouchstart>
+    <header class="header">
+
+        <!-- left box for logo in navbar -->
+        <div class="left">
+            <img src="img/logo.png">
+            <div> AAC Consultant </div>
+        </div>
+
+        <!-- mid box for buttons navbar -->
+        <nav class="mid">
+            <ul class="navbar">
+                <li><a href="index.html" class="active">home</a></li>
+                <li><a href="aboutus.html">about us</a></li>
+                <li><a href="contactus.html">contact us</a></li>
+                <li><a href="facilities.html">facilities</a></li>
+				<li><a href="#">portal</a>
+					<ul>
+						<li><a href="PortalVisitor.php">for Vistors</a></li>
+						<li><a href="PortalEmployee.php">for Employees</a></li>
+						<li><a href="PortalGuard.php">for Guards</a></li>
+					</ul>
+				</li>
+            </ul>
+        </nav>
+
+        <!-- right box for logo in navbar -->
+        <div class="right">
+            <input class="searchbar" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn" type="submit"> Search</button>
+			<br>
+            <a href="login.php">Login/Signup</a>
+        </div>
+
+    </header>
+
+    <!--  Welcome to AAC - content  -->
+	<div class="content">
+    <div class="content1">
+        <h1>Welcome to AAC</h1>
+        <p>AAC Limited is an Indian multinational corporation that provides information technology, consulting and
+            business process services. It is headquartered in Bangalore, Karnataka, India. In 2013, AAC separated its
+            non-IT businesses and formed the privately owned AAC Enterprises</p>
+        <img src="img/img2.jpg">
+    </div>
+    
+    <div class="content2">
+        <h2>Welcome to AAC</h2>
+        <p>AAC Limited is an Indian multinational corporation that provides information technology, consulting and
+            business process services. It is headquartered in Bangalore, Karnataka, India. In 2013, AAC separated its
+            non-IT businesses and formed the privately owned AAC Enterprises</p>
+       
+    </div>
+	</div>
+</body>
+
+</html>
