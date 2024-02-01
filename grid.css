@@ -1,0 +1,15 @@
+.container{
+    border: 1px solid black;
+    height: 500px;
+    width: 500px;
+    background-color: brown;
+display: grid;
+grid-template-columns: 200px 200px 210px;
+grid-template-rows: 90px 90px 90px 90px;
+}
+.box{
+    color: blue;
+    border: 3px solid black;
+    height: 80px;
+    width: 80px;
+}
