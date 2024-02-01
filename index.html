@@ -3,64 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style1.css">
+    <title>Login</title>
+    <link rel="stylesheet" href="styel.css">
 </head>
 <body>
-    <div id="wrapp">
     <div class="container">
-        <img src="background.png"  class="background">
-        <img src="foreground.png" class="foreground">
-        <h1>ADVANTURE</h1>
+        <form id="loginForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="button" onclick="login()">Login</button>
+        </form>
+        <p id="error-message" class="error-message"></p>
     </div>
-    <section>
-        <h2 class="sechead">ADVANTURE TIME</h2>
-        <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam ex modi iste maxime est, error ipsa, quidem exercitationem aspernatur deserunt reiciendis mollitia optio soluta provident tenetur consequuntur possimus odio a.
-            <br>
-            <br>
 
-
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tempore ducimus dolorem, aspernatur rerum exercitationem laboriosam veritatis molestiae debitis omnis maxime repudiandae laudantium nobis eaque temporibus, nisi doloremque minima maiores dicta!
-        </p>
-    
-    <div class="bg bg1">
-        <h2 class="desc">BIKING</h2>
-        <p class="text">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam ex modi iste maxime est, error ipsa, quidem exercitationem aspernatur deserunt reiciendis mollitia optio soluta provident tenetur consequuntur possimus odio a.
-            <br>
-            <br>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt, eos magni. Aspernatur itaque dignissimos earum quisquam voluptatibus! Iste sapiente libero eos a cumque veritatis eligendi distinctio iure explicabo suscipit. Reprehenderit.
-
-
-        </p>
-        </div>
-        <div class="bg bg2">
-            <h2 class="desc">PARA GRDING</h2>
-            <p class="text">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam ex modi iste maxime est, error ipsa, quidem exercitationem aspernatur deserunt reiciendis mollitia optio soluta provident tenetur consequuntur possimus odio a.
-                <br>
-                <br>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt, eos magni. Aspernatur itaque dignissimos earum quisquam voluptatibus! Iste sapiente libero eos a cumque veritatis eligendi distinctio iure explicabo suscipit. Reprehenderit.
-    
-    
-            </p>
-            </div>
-            <div class="bg bg3">
-                <h2 class="desc">SURFING</h2>
-                <p class="text">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam ex modi iste maxime est, error ipsa, quidem exercitationem aspernatur deserunt reiciendis mollitia optio soluta provident tenetur consequuntur possimus odio a.
-                    <br>
-                    <br>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt, eos magni. Aspernatur itaque dignissimos earum quisquam voluptatibus! Iste sapiente libero eos a cumque veritatis eligendi distinctio iure explicabo suscipit. Reprehenderit.
-        
-        
-                </p>
-                </div>
-            </div>
-        </div>
-    </section>
-    </div>
+    <script src="news.js"></script>
+</body>
+</html>
     
 </body>
 </html>
